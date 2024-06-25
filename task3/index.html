@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe</title>
+    <style>
+/* styles.css */
+*
+{
+    background-color: aquamarine;
+}
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #926565;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.game-container {
+    text-align: center;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-template-rows: repeat(3, 100px);
+    gap: 5px;
+    margin: 20px auto;
+}
+
+.cell {
+    width: 100px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    border: 1px solid #ccc;
+    font-size: 2em;
+    cursor: pointer;
+}
+
+button {
+    padding: 10px 20px;
+    margin: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+#status {
+    font-size: 1.2em;
+    margin-top: 20px;
+}
+
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>Tic-Tac-Toe</h1>
+        <div class="board" id="board">
+            <div class="cell" data-index="0"></div>
+            <div class="cell" data-index="1"></div>
+            <div class="cell" data-index="2"></div>
+            <div class="cell" data-index="3"></div>
+            <div class="cell" data-index="4"></div>
+            <div class="cell" data-index="5"></div>
+            <div class="cell" data-index="6"></div>
+            <div class="cell" data-index="7"></div>
+            <div class="cell" data-index="8"></div>
+        </div>
+        <button id="resetBtn">Reset</button>
+        <p id="status"></p>
+    </div>
+    <script>
+        // script.js
+const board = document.getElementById('board');
+const resetBtn = document.getElementById('resetBtn');
+const statusDisplay = document.getElementById('status');
+let cells = Array.from(document.querySelectorAll('.cell'));
+let currentPlayer = 'X';
+let gameState = ['', '', '', '', '', '', '', '', ''];
+let gameActive = true;
+
+const winningConditions = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6]
+];
+
+function handleCellClick(event) {
+    const clickedCell = event.target;
+    const clickedCellIndex = parseInt(clickedCell.getAttribute('data-index'));
+
+    if (gameState[clickedCellIndex] !== '' || !gameActive) {
+        return;
+    }
+
+    gameState[clickedCellIndex] = currentPlayer;
+    clickedCell.textContent = currentPlayer;
+
+    if (checkWin()) {
+        statusDisplay.textContent = `Player ${currentPlayer} wins!`;
+        gameActive = false;
+        return;
+    }
+
+    if (!gameState.includes('')) {
+        statusDisplay.textContent = 'Game ends in a draw!';
+        gameActive = false;
+        return;
+    }
+
+    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+    statusDisplay.textContent = `It's ${currentPlayer}'s turn`;
+}
+
+function checkWin() {
+    return winningConditions.some(condition => {
+        const [a, b, c] = condition;
+        return gameState[a] && gameState[a] === gameState[b] && gameState[a] === gameState[c];
+    });
+}
+
+function resetGame() {
+    gameState = ['', '', '', '', '', '', '', '', ''];
+    currentPlayer = 'X';
+    gameActive = true;
+    statusDisplay.textContent = `It's ${currentPlayer}'s turn`;
+    cells.forEach(cell => (cell.textContent = ''));
+}
+
+cells.forEach(cell => cell.addEventListener('click', handleCellClick));
+resetBtn.addEventListener('click', resetGame);
+resetGame();
+
+    </script>
+</body>
+</html>
